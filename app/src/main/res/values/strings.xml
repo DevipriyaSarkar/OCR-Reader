@@ -14,4 +14,6 @@
     <string name="send_email_text">Send Email</string>
     <string name="mail_intent_chooser_text">Send mail...</string>
     <string name="no_email_client_error">There are no email clients installed.</string>
+    <string name="copy_text">Copy to clipboard</string>
+    <string name="clipboard_copy_successful_message">Copied to clipboard.</string>
 </resources>

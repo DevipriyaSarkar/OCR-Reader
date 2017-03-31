@@ -46,7 +46,7 @@
             android:checked="false" />
 
         <Button
-            android:id="@+id/read_text"
+            android:id="@+id/read_text_button"
             android:layout_marginTop="@dimen/button_margin_top"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -55,7 +55,16 @@
             android:textColor="@android:color/white"/>
 
         <Button
-            android:id="@+id/mail_text"
+            android:id="@+id/copy_text_button"
+            android:layout_marginTop="@dimen/button_margin_top"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/copy_text"
+            android:background="@color/colorAccent"
+            android:textColor="@android:color/white"/>
+
+        <Button
+            android:id="@+id/mail_text_button"
             android:layout_marginTop="@dimen/button_margin_top"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

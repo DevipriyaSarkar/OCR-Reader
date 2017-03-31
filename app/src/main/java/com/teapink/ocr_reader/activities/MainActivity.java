@@ -1,6 +1,8 @@
 package com.teapink.ocr_reader.activities;
 
+import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -19,6 +21,8 @@ public class MainActivity extends AppCompatActivity {
     private CompoundButton useFlash;
     private TextView statusMessage;
     private TextView textValue;
+    private Button copyButton;
+    private Button mailTextButton;
 
     private static final int RC_OCR_CAPTURE = 9003;
     private static final String TAG = "MainActivity";
@@ -34,8 +38,8 @@ public class MainActivity extends AppCompatActivity {
         textValue = (TextView)findViewById(R.id.text_value);
         useFlash = (CompoundButton) findViewById(R.id.use_flash);
 
-        Button readText = (Button) findViewById(R.id.read_text);
-        readText.setOnClickListener(new View.OnClickListener() {
+        Button readTextButton = (Button) findViewById(R.id.read_text_button);
+        readTextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // launch Ocr capture activity.
@@ -47,15 +51,32 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Button mailText = (Button) findViewById(R.id.mail_text);
-        mailText.setOnClickListener(new View.OnClickListener() {
+        copyButton = (Button) findViewById(R.id.copy_text_button);
+        copyButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
+                    android.text.ClipboardManager clipboard =
+                            (android.text.ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                    clipboard.setText(textValue.getText().toString());
+                } else {
+                    android.content.ClipboardManager clipboard =
+                            (android.content.ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                    android.content.ClipData clip = android.content.ClipData.newPlainText("Copied Text", textValue.getText().toString());
+                    clipboard.setPrimaryClip(clip);
+                }
+                Toast.makeText(getApplicationContext(), R.string.clipboard_copy_successful_message, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        mailTextButton = (Button) findViewById(R.id.mail_text_button);
+        mailTextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(Intent.ACTION_SEND);
                 i.setType("message/rfc822");
-                i.putExtra(Intent.EXTRA_EMAIL, new String[]{"abc@abc.com"});
-                i.putExtra(Intent.EXTRA_SUBJECT, "Book Screenshot");
-                i.putExtra(Intent.EXTRA_TEXT, textValue.getText());
+                i.putExtra(Intent.EXTRA_SUBJECT, "Text Read");
+                i.putExtra(Intent.EXTRA_TEXT, textValue.getText().toString());
                 try {
                     startActivity(Intent.createChooser(i, getString(R.string.mail_intent_chooser_text)));
                 } catch (android.content.ActivityNotFoundException ex) {
@@ -64,6 +85,18 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (textValue.getText().toString().isEmpty()) {
+            copyButton.setVisibility(View.GONE);
+            mailTextButton.setVisibility(View.GONE);
+        } else {
+            copyButton.setVisibility(View.VISIBLE);
+            mailTextButton.setVisibility(View.VISIBLE);
+        }
     }
 
     /**
